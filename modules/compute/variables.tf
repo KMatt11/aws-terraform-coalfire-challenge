@@ -38,7 +38,7 @@ variable "images_bucket_arn" {
 }
 
 variable "environment" {
-  description = "environment name (e.g., dev, staging, prod)"
+  description = "environment name (dev, staging, prod)"
   type        = string
   default     = "dev"
 }
