@@ -1,7 +1,5 @@
 # compute variables.tf
 
-# compute variables.tf
-
 variable "project_name" {
   description = "project name for tagging"
   type        = string
