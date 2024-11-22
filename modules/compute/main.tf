@@ -12,14 +12,14 @@ data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
   }
 }
 
-# Update launch template for private instances
+# launch template for private instances
 resource "aws_launch_template" "coalfire_private" {
   name_prefix            = "coalfire_private"
-  image_id               = "ami-0468ac5f57c53fbad"  
+  image_id               = "ami-08d658f84a6d84a80"  
   instance_type          = var.private_instance_type
   vpc_security_group_ids = [var.private_sg]
   key_name               = var.key_name
-  user_data              = filebase64("${path.module}/apache.sh")
+  user_data              = filebase64("${path.module}/apache.sh") 
 
   tags = {
     Name = "coalfire-private-instance"
@@ -52,13 +52,13 @@ resource "aws_autoscaling_attachment" "coalfire_asg_attachment" {
   lb_target_group_arn    = var.lb_target_group_arn
 }
 
-# IAM role for asg to read from s3 
+# iam role for asg
 resource "aws_iam_role" "coalfire_asg_s3_read_role" {
   name               = "${var.project_name}-asg-s3-read-role"
   assume_role_policy = data.aws_iam_policy_document.coalfire_ec2_assume_role.json
 }
 
-# IAM policy for asg to read from s3
+# iam policy for asg
 resource "aws_iam_policy" "coalfire_s3_read_policy" {
   name        = "${var.project_name}-s3-read-policy"
   description = "Policy to allow ASG instances to read from images bucket"
@@ -75,14 +75,14 @@ resource "aws_iam_policy" "coalfire_s3_read_policy" {
   })
 }
 
-# IAM policy attachment for asg
+# policy attachment for asg
 resource "aws_iam_policy_attachment" "coalfire_asg_s3_read_attach" {
   name       = "${var.project_name}-asg-s3-read-attach"
   roles      = [aws_iam_role.coalfire_asg_s3_read_role.name]
   policy_arn = aws_iam_policy.coalfire_s3_read_policy.arn
 }
 
-# instance profile for asg 
+# instance profile for asg
 resource "aws_iam_instance_profile" "coalfire_asg_instance_profile" {
   name = "${var.project_name}-asg-instance-profile"
   role = aws_iam_role.coalfire_asg_s3_read_role.name
