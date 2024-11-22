@@ -14,3 +14,8 @@ output "asg_instance_profile_name" {
   description = "profile for asg"
   value       = aws_iam_instance_profile.coalfire_asg_instance_profile.name
 }
+
+output "tags" {
+  description = "tags applied to resources"
+  value       = var.tags
+}
