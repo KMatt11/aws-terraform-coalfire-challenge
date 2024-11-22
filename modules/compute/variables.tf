@@ -1,5 +1,7 @@
 # compute variables.tf
 
+# compute variables.tf
+
 variable "project_name" {
   description = "project name for tagging"
   type        = string
@@ -35,4 +37,19 @@ variable "private_instance_type" {
 variable "images_bucket_arn" {
   description = "ARN s3 bucket for images"
   type        = string
+}
+
+variable "environment" {
+  description = "environment name (e.g., dev, staging, prod)"
+  type        = string
+  default     = "dev"
+}
+
+variable "tags" {
+  description = "common tags for resources"
+  type        = map(string)
+  default = {
+    Environment = var.environment
+    Project     = var.project_name
+  }
 }
