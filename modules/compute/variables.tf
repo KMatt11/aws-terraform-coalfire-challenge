@@ -44,10 +44,6 @@ variable "environment" {
 }
 
 variable "tags" {
-  description = "common tags for resources"
+  description = "Tags for compute resources"
   type        = map(string)
-  default = {
-    Environment = var.environment
-    Project     = var.project_name
-  }
 }

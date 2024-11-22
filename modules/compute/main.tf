@@ -12,37 +12,14 @@ data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
   }
 }
 
-# AMI data source to get the most recent red hat linux AMI
-data "aws_ami" "rhel_8_5" {
-  most_recent = true
-  owners = ["309956199498"]
-
-  filter {
-    name   = "name"
-    values = ["RHEL-8.5*"]
-  }
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
-# launch template for the private instances
+# Update launch template for private instances
 resource "aws_launch_template" "coalfire_private" {
   name_prefix            = "coalfire_private"
-  image_id               = data.aws_ami.rhel_8_5.id
+  image_id               = "ami-03c8fa35fb3dafced"  
   instance_type          = var.private_instance_type
   vpc_security_group_ids = [var.private_sg]
   key_name               = var.key_name
-  user_data              = filebase64("apache.sh")
+  user_data              = filebase64("${path.module}/apache.sh")
 
   tags = {
     Name = "coalfire-private-instance"
@@ -62,15 +39,11 @@ resource "aws_autoscaling_group" "coalfire_private_asg" {
     version = "$Latest"
   }
 
-  tags = [
-    {
-      key                 = "Name"
-      value               = "coalfire-private-asg"
-      propagate_at_launch = true
-    }
-  ]
-
-  iam_instance_profile = aws_iam_instance_profile.coalfire_asg_instance_profile.name
+  tag {
+    key                 = "Name"
+    value               = "coalfire-private-asg"
+    propagate_at_launch = true
+  }
 }
 
 # attach the auto scaling group to load balancer target group

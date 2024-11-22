@@ -1,14 +1,30 @@
 # s3 main.tf
 
-# images and logs bucket
+data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+# s3 bucket without acl argument
 resource "aws_s3_bucket" "coalfire_project_bucket" {
   bucket = "${var.project_name}-bucket"
-  acl    = "private"
 
   tags = {
     Name        = "${var.project_name}-bucket"
     Environment = var.environment
   }
+}
+
+# s3 Bucket acl
+resource "aws_s3_bucket_acl" "coalfire_project_bucket_acl" {
+  bucket = aws_s3_bucket.coalfire_project_bucket.id
+  acl    = "private"
 }
 
 # public access block for s3
@@ -115,7 +131,7 @@ resource "aws_iam_policy" "coalfire_write_logs_policy" {
 # IAM role for logs write access
 resource "aws_iam_role" "coalfire_ec2_write_logs_role" {
   name               = "${var.project_name}-ec2-write-logs-role"
-  assume_role_policy = data.aws_iam_policy_document.coalfire_ec2_assume_role.json
+assume_role_policy = data.aws_iam_policy_document.coalfire_ec2_assume_role.json
 }
 
 # IAM policy for logs write role
