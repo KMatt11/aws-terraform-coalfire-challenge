@@ -1,5 +1,4 @@
-# s3 main.tf
-
+# IAM Policy Document for EC2 to assume a role
 data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -11,7 +10,7 @@ data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
   }
 }
 
-# s3 bucket without acl argument
+# s3 bucket without acl
 resource "aws_s3_bucket" "coalfire_project_bucket" {
   bucket = "${var.project_name}-bucket"
 
@@ -29,31 +28,6 @@ resource "aws_s3_bucket_public_access_block" "coalfire_project" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-# images, archive and logs folders
-resource "aws_s3_object" "coalfire_images_folder" {
-  bucket = aws_s3_bucket.coalfire_project_bucket.bucket
-  key    = "images/"
-  source = "/dev/null"
-
-  depends_on = [aws_s3_bucket.coalfire_project_bucket]
-}
-
-resource "aws_s3_object" "coalfire_archive_folder" {
-  bucket = aws_s3_bucket.coalfire_project_bucket.bucket
-  key    = "images/archive/"
-  source = "/dev/null"
-
-  depends_on = [aws_s3_bucket.coalfire_project_bucket]
-}
-
-resource "aws_s3_object" "coalfire_logs_folder" {
-  bucket = aws_s3_bucket.coalfire_project_bucket.bucket
-  key    = "logs/"
-  source = "/dev/null"
-
-  depends_on = [aws_s3_bucket.coalfire_project_bucket]
 }
 
 # lifecycle configuration for s3 bucket
@@ -125,7 +99,7 @@ resource "aws_iam_policy" "coalfire_write_logs_policy" {
 # IAM role for logs write access
 resource "aws_iam_role" "coalfire_ec2_write_logs_role" {
   name               = "${var.project_name}-ec2-write-logs-role"
-assume_role_policy = data.aws_iam_policy_document.coalfire_ec2_assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.coalfire_ec2_assume_role.json
 }
 
 # IAM policy for logs write role
