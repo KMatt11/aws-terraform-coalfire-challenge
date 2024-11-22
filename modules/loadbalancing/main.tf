@@ -8,9 +8,7 @@ resource "aws_lb" "coalfire_alb" {
   security_groups    = [var.public_sg]
   subnets            = var.public_subnets
 
-  tags = {
-    Name = "coalfire-alb"
-  }
+  tags = var.tags
 }
 
 # target group for auto scaling group instances
@@ -29,9 +27,7 @@ resource "aws_lb_target_group" "coalfire_target_group" {
     unhealthy_threshold = 2
   }
 
-  tags = {
-    Name = "coalfire-target-group"
-  }
+  tags = var.tags
 }
 
 # listener for load balancer
