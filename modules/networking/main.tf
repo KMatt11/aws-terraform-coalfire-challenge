@@ -46,7 +46,7 @@ resource "aws_internet_gateway" "coalfire_internet_gateway" {
 }
 
 resource "aws_eip" "coalfire_eip" {
-  vpc = true
+  associate_with_private_ip = true
 }
 
 resource "aws_nat_gateway" "coalfire_nat_gateway" {
