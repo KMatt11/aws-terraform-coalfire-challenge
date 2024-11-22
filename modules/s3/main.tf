@@ -1,4 +1,4 @@
-# compute main.tf
+# s3 main.tf
 
 # images and logs bucket
 resource "aws_s3_bucket" "coalfire_project_bucket" {
