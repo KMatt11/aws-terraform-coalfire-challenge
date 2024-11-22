@@ -21,12 +21,6 @@ resource "aws_s3_bucket" "coalfire_project_bucket" {
   }
 }
 
-# s3 Bucket acl
-resource "aws_s3_bucket_acl" "coalfire_project_bucket_acl" {
-  bucket = aws_s3_bucket.coalfire_project_bucket.id
-  acl    = "private"
-}
-
 # public access block for s3
 resource "aws_s3_bucket_public_access_block" "coalfire_project" {
   bucket = aws_s3_bucket.coalfire_project_bucket.id
