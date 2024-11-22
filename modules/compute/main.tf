@@ -1,5 +1,17 @@
 # compute main.tf
 
+# IAM assume role policy document for EC2
+data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
 # AMI data source to get the most recent red hat linux AMI
 data "aws_ami" "rhel_8_5" {
   most_recent = true
@@ -40,7 +52,7 @@ resource "aws_launch_template" "coalfire_private" {
 # auto scaling group for the private subnets (sub3 and sub4)
 resource "aws_autoscaling_group" "coalfire_private_asg" {
   name                = "coalfire_private_asg"
-  vpc_zone_identifier = tolist(var.private_subnet)
+  vpc_zone_identifier = tolist(var.private_subnets)
   min_size            = 2
   max_size            = 6
   desired_capacity    = 2
@@ -57,6 +69,8 @@ resource "aws_autoscaling_group" "coalfire_private_asg" {
       propagate_at_launch = true
     }
   ]
+
+  iam_instance_profile = aws_iam_instance_profile.coalfire_asg_instance_profile.name
 }
 
 # attach the auto scaling group to load balancer target group
@@ -88,7 +102,7 @@ resource "aws_iam_policy" "coalfire_s3_read_policy" {
   })
 }
 
-# IAM policy for asg
+# IAM policy attachment for asg
 resource "aws_iam_policy_attachment" "coalfire_asg_s3_read_attach" {
   name       = "${var.project_name}-asg-s3-read-attach"
   roles      = [aws_iam_role.coalfire_asg_s3_read_role.name]
