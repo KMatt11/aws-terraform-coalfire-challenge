@@ -21,7 +21,7 @@ variable "private_cidrs" {
 variable "availability_zones" {
   description = "availability zones to use for the subnets"
   type        = list(string)
-  default     = ["us-east-2a", "us-east-2b"]
+  default     = ["us-east-1a", "us-east-1b"]
 }
 
 variable "access_ip" {

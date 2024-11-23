@@ -36,7 +36,7 @@ module "compute" {
   key_name              = var.key_name
   lb_target_group_arn   = module.loadbalancing.target_group_arn
   private_instance_type = var.private_instance_type
-  images_bucket_arn     = module.s3.bucket_arn
+  images_bucket_arn     = module.s3.images_bucket_arn
   project_name          = var.project_name
   tags                  = var.tags
 }

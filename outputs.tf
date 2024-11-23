@@ -34,16 +34,28 @@ output "target_group_arn" {
   value       = module.loadbalancing.target_group_arn
 }
 
-# s3 bucket name
-output "s3_bucket_name" {
-  description = "s3 bucket name"
-  value       = module.s3.bucket_name
+# s3 logs bucket name
+output "s3_logs_bucket_name" {
+  description = "s3 logs bucket name"
+  value       = module.s3.logs_bucket_name
 }
 
-# s3 bucket arn
-output "s3_bucket_arn" {
-  description = "s3 bucket arn"
-  value       = module.s3.bucket_arn
+# s3 images bucket name
+output "s3_images_bucket_name" {
+  description = "s3 images bucket name"
+  value       = module.s3.images_bucket_name
+}
+
+# s3 logs bucket arn
+output "s3_logs_bucket_arn" {
+  description = "s3 logs bucket arn"
+  value       = module.s3.logs_bucket_arn
+}
+
+# s3 images bucket arn
+output "s3_images_bucket_arn" {
+  description = "s3 images bucket arn"
+  value       = module.s3.images_bucket_arn
 }
 
 # asg (compute module)
