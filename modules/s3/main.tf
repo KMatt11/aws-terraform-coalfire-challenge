@@ -11,8 +11,8 @@ data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
 }
 
 # s3 bucket without acl
-resource "aws_s3_bucket" "coalfire_project_bucket" {
-  bucket = "${var.project_name}-bucket"
+resource "aws_s3_bucket" "kinsey-images" {
+  bucket = "kinsey-images"
 
   tags = {
     Name        = "${var.project_name}-bucket"
@@ -20,9 +20,39 @@ resource "aws_s3_bucket" "coalfire_project_bucket" {
   }
 }
 
+# s3 bucket folder
+resource "aws_s3_object" "kinsey-memes" {
+  bucket = aws_s3_bucket.kinsey-images.id
+  key = "memes/"
+}
+
+# s3 bucket without acl
+resource "aws_s3_bucket" "kinsey-logs" {
+  bucket = "kinsey-logs"
+
+  tags = {
+    Name        = "${var.project_name}-bucket"
+    Environment = var.environment
+  }
+}
+
+# s3 bucket folder
+resource "aws_s3_object" "folder" {
+  bucket = aws_s3_bucket.kinsey-logs.id
+  key = "Active-folder/"
+}
+
+# s3 bucket folder
+resource "aws_s3_object" "folder2" {
+  bucket = aws_s3_bucket.kinsey-logs.id
+  key = "Inactive-folder/"
+}
+
+
+
 # public access block for s3
-resource "aws_s3_bucket_public_access_block" "coalfire_project" {
-  bucket = aws_s3_bucket.coalfire_project_bucket.id
+resource "aws_s3_bucket_public_access_block" "logs" {
+  bucket = aws_s3_bucket.kinsey-logs.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -30,9 +60,17 @@ resource "aws_s3_bucket_public_access_block" "coalfire_project" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_public_access_block" "kinsey-images" {
+  bucket = aws_s3_bucket.kinsey-images.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
 # lifecycle configuration for s3 bucket
 resource "aws_s3_bucket_lifecycle_configuration" "coalfire_project_lifecycle" {
-  bucket = aws_s3_bucket.coalfire_project_bucket.id
+  bucket = aws_s3_bucket.kinsey-images.id
 
   # move objects in the memes folder after 90 days
   rule {
@@ -40,7 +78,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "coalfire_project_lifecycle" {
     status = "Enabled"
 
     filter {
-      prefix = "images/memes/"
+      prefix = "kinsey-images/memes/"
     }
 
     transition {
@@ -48,14 +86,18 @@ resource "aws_s3_bucket_lifecycle_configuration" "coalfire_project_lifecycle" {
       storage_class = "GLACIER"
     }
   }
+}
 
   # move objects in the active folder after 90 days
+resource "aws_s3_bucket_lifecycle_configuration" "coalfire_project_lifecycle_2" {
+  bucket = aws_s3_bucket.kinsey-logs.id
+
   rule {
     id     = "Move-Active-to-Glacier"
     status = "Enabled"
 
     filter {
-      prefix = "logs/active/"
+      prefix = "kinsey-logs/Active/"
     }
 
     transition {
@@ -70,7 +112,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "coalfire_project_lifecycle" {
     status = "Enabled"
 
     filter {
-      prefix = "logs/inactive/"
+      prefix = "kinsey-logs/Inactive/"
     }
 
     expiration {
@@ -90,7 +132,7 @@ resource "aws_iam_policy" "coalfire_write_logs_policy" {
       {
         Action   = ["s3:PutObject"]
         Effect   = "Allow"
-        Resource = "${aws_s3_bucket.coalfire_project_bucket.arn}/logs/*"
+        Resource = "${aws_s3_bucket.kinsey-logs.arn}/logs/*"
       }
     ]
   })

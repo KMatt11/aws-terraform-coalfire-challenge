@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "coalfire_ec2_assume_role" {
 # launch template for private instances
 resource "aws_launch_template" "coalfire_private" {
   name_prefix            = "coalfire_private"
-  image_id               = "ami-08d658f84a6d84a80"  
+  image_id               = "ami-0583d8c7a9c35822c"  
   instance_type          = var.private_instance_type
   vpc_security_group_ids = [var.private_sg]
   key_name               = var.key_name

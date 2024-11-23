@@ -1,11 +1,21 @@
-output "bucket_arn" {
+output "logs_bucket_arn" {
   description = "s3 bucket ARN"
-  value       = aws_s3_bucket.coalfire_project_bucket.arn
+  value       = aws_s3_bucket.kinsey-logs.arn
 }
 
-output "bucket_name" {
+output "images_bucket_arn" {
+  description = "s3 bucket ARN"
+  value       = aws_s3_bucket.kinsey-images.arn
+}
+
+output "logs_bucket_name" {
   description = "s3 bucket name"
-  value       = aws_s3_bucket.coalfire_project_bucket.bucket
+  value       = aws_s3_bucket.kinsey-logs.bucket
+}
+
+output "images_bucket_name" {
+  description = "s3 bucket name"
+  value       = aws_s3_bucket.kinsey-images.bucket
 }
 
 output "write_logs_policy_arn" {
